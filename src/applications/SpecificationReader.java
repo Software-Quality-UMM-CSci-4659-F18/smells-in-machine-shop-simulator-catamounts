@@ -28,7 +28,23 @@ public class SpecificationReader {
         specification.setChangeOverTimes(changeOverTimes);
     }
 
-    private void
+    private int[] createTaskSpecifications(Job job, int tasks) {
+        int[] specificationsForTasks = new int[2 * tasks + 1];
+
+        //Refactor later with datastructures reafactor.
+        System.out.println("Enter the tasks (machine, time)"
+                + " in process order");
+        for (int j = 1; j <= tasks; j++) { // get tasks for job i
+            int machine = keyboard.readInteger();
+            int taskTime = keyboard.readInteger();
+            if (machine < 1 || machine > specification.getNumMachines() || taskTime < 1) {
+                throw new MyInputException(MachineShopSimulator.BAD_MACHINE_NUMBER_OR_TASK_TIME);
+            }
+            specificationsForTasks[2*(j-1)+1] = machine;
+            specificationsForTasks[2*(j-1)+2] = taskTime;
+        }
+        return specificationsForTasks;
+    }
 
     private void readJobSpecifications() {
         // input the jobs
@@ -41,23 +57,8 @@ public class SpecificationReader {
             }
             jobs[i] = new Job(i);
             jobs[i].setNumTasks(tasks);
-
-            //Refactor with task refactorings
-            int[] specificationsForTasks = new int[2 * tasks + 1];
-
-            //Refactor later with datastructures reafactor.
-            System.out.println("Enter the tasks (machine, time)"
-                    + " in process order");
-            for (int j = 1; j <= tasks; j++) { // get tasks for job i
-                int theMachine = keyboard.readInteger();
-                int theTaskTime = keyboard.readInteger();
-                if (theMachine < 1 || theMachine > specification.getNumMachines() || theTaskTime < 1) {
-                    throw new MyInputException(MachineShopSimulator.BAD_MACHINE_NUMBER_OR_TASK_TIME);
-                }
-                specificationsForTasks[2*(j-1)+1] = theMachine;
-                specificationsForTasks[2*(j-1)+2] = theTaskTime;
-            }
-            jobs[i].setSpecificationsForTasks(specificationsForTasks);
+            int[] jobTasks = createTaskSpecifications(jobs[i], tasks);
+            jobs[i].setSpecificationsForTasks(jobTasks);
         }
         specification.setJobSpecification(jobs);
     }
