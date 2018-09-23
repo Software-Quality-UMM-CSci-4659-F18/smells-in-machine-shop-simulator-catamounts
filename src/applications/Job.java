@@ -8,6 +8,12 @@ class Job {
     private int length; // sum of scheduled task times
     private int arrivalTime; // arrival time at current queue
     private int id; // job identifier
+    private int numTasks;
+    private int[] specificationsForTasks;
+
+    public int[] getSpecificationsForTasks() {
+        return specificationsForTasks;
+    }
 
     // constructor
     Job(int theId) {
@@ -28,6 +34,18 @@ class Job {
         int theTime = ((Task) getTaskQ().remove()).getTime();
         length = getLength() + theTime;
         return theTime;
+    }
+
+    public void setNumTasks(int numTasks) {
+        this.numTasks = numTasks;
+    }
+
+    public int getNumTasks() {
+        return numTasks;
+    }
+
+    public void setSpecificationsForTasks(int[] specificationsForTasks) {
+        this.specificationsForTasks = specificationsForTasks;
     }
 
     public LinkedQueue getTaskQ() {
