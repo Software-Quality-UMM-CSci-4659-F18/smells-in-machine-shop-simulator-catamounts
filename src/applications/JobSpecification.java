@@ -1,4 +1,4 @@
-package applications;
+/*package applications;
 
 public class JobSpecification {
     private int numTasks;
@@ -20,3 +20,4 @@ public class JobSpecification {
         return specificationsForTasks;
     }
 }
+*/
