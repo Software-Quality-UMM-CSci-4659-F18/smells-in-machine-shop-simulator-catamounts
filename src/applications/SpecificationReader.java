@@ -60,7 +60,7 @@ public class SpecificationReader {
             int[] jobTasks = createTaskSpecifications(jobs[i], tasks);
             jobs[i].setSpecificationsForTasks(jobTasks);
         }
-        specification.setJobSpecification(jobs);
+        specification.jobs = jobs;
     }
 
     private void readNumberMachinesAndJobs() {
