@@ -10,6 +10,8 @@ class Job {
     private int id; // job identifier
     private int numTasks;
     private int[] specificationsForTasks;
+    private final int completionTime;
+    private final int totalWaitTime;
 
     public int[] getSpecificationsForTasks() {
         return specificationsForTasks;
@@ -66,6 +68,20 @@ class Job {
 
     public int getId() {
         return id;
+    }
+
+    public JobCompletionData(int jobNumber, int completionTime, int totalWaitTime) {
+        this.jobNumber = jobNumber;
+        this.completionTime = completionTime;
+        this.totalWaitTime = totalWaitTime;
+    }
+
+    public int getCompletionTime() {
+        return completionTime;
+    }
+
+    public int getTotalWaitTime() {
+        return totalWaitTime;
     }
 
 }
