@@ -26,7 +26,7 @@ public class MachineShopSimulator {
      */
     static boolean moveToNextMachine(Job theJob, SimulationResults simulationResults) {
         if (theJob.getTaskQ().isEmpty()) {// no next task
-            simulationResults.setJobCompletionData(theJob.getId(), timeNow, timeNow - theJob.getLength());
+            theJob.setJobCompletionData(theJob.getId(), timeNow, timeNow - theJob.getLength());
             return false;
         } else {// theJob has a next task
                 // get machine for next task
