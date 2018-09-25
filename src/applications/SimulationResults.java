@@ -63,13 +63,13 @@ public class SimulationResults {
         nextJob++;
     }
 
-    public Job[] getJobCompletionData() {
-        return jobs;
-    }
-
-    public void setJobCompletionData(int jobID, int completionTime, int totalWaitTime) {
-        Job jobCompletionData = new Job(jobID, completionTime, totalWaitTime);
-        jobs[nextJob] = jobCompletionData;
-        nextJob++;
-    }
+//    public Job[] getJobCompletionData() {
+//        return jobs;
+//    }
+//
+//    public void setJobCompletionData(int jobID, int completionTime, int totalWaitTime) {
+//        Job jobCompletionData = new Job(jobID, completionTime, totalWaitTime);
+//        jobs[nextJob] = jobCompletionData;
+//        nextJob++;
+//    }
 }
