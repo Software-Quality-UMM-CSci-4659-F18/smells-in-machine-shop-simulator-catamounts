@@ -47,6 +47,9 @@ hs_err_pid*
 .gradle
 /build/
 
+### Eclipse ###
+.project
+
 # Ignore Gradle GUI config
 gradle-app.setting
 
