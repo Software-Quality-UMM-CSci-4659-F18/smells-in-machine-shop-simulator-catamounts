@@ -26,14 +26,15 @@ public class MachineShopSimulator {
      */
     static boolean moveToNextMachine(Job theJob, SimulationResults simulationResults) {
         if (theJob.getTaskQ().isEmpty()) {// no next task
-            theJob.setJobCompletionData(theJob.getId(), timeNow, timeNow - theJob.getLength());
+            theJob.completionTime = timeNow;
+            theJob.totalWaitTime = timeNow - theJob.getTimeRunning();
             return false;
         } else {// theJob has a next task
                 // get machine for next task
             int p = ((Task) theJob.getTaskQ().getFrontElement()).getMachine();
             // put on machine p's wait queue
             machine[p].getJobQ().put(theJob);
-            theJob.setArrivalTime(timeNow);
+            theJob.machineArrivalTime = timeNow;
             // if p idle, schedule immediately
             if (eList.nextEventTime(p) == largeTime) {// machine is idle
                 changeState(p);
@@ -60,7 +61,7 @@ public class MachineShopSimulator {
                 machine[theMachine].setActiveJob((Job) machine[theMachine].getJobQ()
                         .remove());
                 machine[theMachine].setTotalWait(machine[theMachine].getTotalWait() + timeNow
-                        - machine[theMachine].getActiveJob().getArrivalTime());
+                        - machine[theMachine].getActiveJob().machineArrivalTime);
                 machine[theMachine].setNumTasks(machine[theMachine].getNumTasks() + 1);
                 int t = machine[theMachine].getActiveJob().removeNextTask();
                 eList.setFinishTime(theMachine, timeNow + t);
@@ -86,7 +87,7 @@ public class MachineShopSimulator {
         // input the jobs
         Job theJob;
         for (int i = 1; i <= specification.getNumJobs(); i++) {
-            int tasks = specification.jobs[i].getNumTasks();
+            int tasks = specification.jobs[i].numTasks;
             int firstMachine = 0; // machine for first task
 
             // create the job

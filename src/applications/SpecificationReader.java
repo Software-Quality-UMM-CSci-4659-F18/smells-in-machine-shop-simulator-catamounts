@@ -56,7 +56,7 @@ public class SpecificationReader {
                 throw new MyInputException(MachineShopSimulator.EACH_JOB_MUST_HAVE_AT_LEAST_1_TASK);
             }
             jobs[i] = new Job(i);
-            jobs[i].setNumTasks(tasks);
+            jobs[i].numTasks = tasks;
             int[] jobTasks = createTaskSpecifications(jobs[i], tasks);
             jobs[i].setSpecificationsForTasks(jobTasks);
         }

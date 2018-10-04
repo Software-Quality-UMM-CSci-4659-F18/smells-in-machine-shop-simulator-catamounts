@@ -51,7 +51,7 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
         result.jobs = jobs;
         for (int i=1; i<=numJobs; ++i) {
             int numTasks = r.nextInt(MAX_TASKS) + 1;
-            jobs[i].setNumTasks(numTasks);
+            jobs[i].numTasks = numTasks;
 
             int[] specificationsForTasks = new int[2 * numTasks + 1];
 
@@ -115,7 +115,7 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
         Job[] jobs = new Job[numJobs+1];
         for (int i=1; i<=numJobs; ++i) {
             Job job = spec.jobs[i];
-            int numTasks = job.getNumTasks();
+            int numTasks = job.numTasks;
             int[] specsForTasks = job.getSpecificationsForTasks();
             int numTasksOnThisMachine = 0;
             for (int j=1; j<=numTasks; ++j) {
@@ -145,7 +145,7 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
                 }
             }
             Job newJobSpec = new Job(i);
-            newJobSpec.setNumTasks(newNumTasks);
+            newJobSpec.numTasks = newNumTasks;
             newJobSpec.setSpecificationsForTasks(newSpecsForTasks);
             jobs[i] = newJobSpec;
         }
@@ -189,7 +189,7 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
         int size = simulationSpecification.getNumMachines();
         size += simulationSpecification.getNumJobs();
         for (int i=1; i<=simulationSpecification.getNumJobs(); ++i) {
-            size += simulationSpecification.jobs[i].getNumTasks();
+            size += simulationSpecification.jobs[i].numTasks;
         }
 
         return BigDecimal.valueOf(size);
