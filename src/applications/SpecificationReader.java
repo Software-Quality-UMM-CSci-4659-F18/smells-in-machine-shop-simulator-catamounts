@@ -28,35 +28,39 @@ public class SpecificationReader {
         specification.setChangeOverTimes(changeOverTimes);
     }
 
+    private int[] createTaskSpecifications(Job job, int tasks) {
+        int[] specificationsForTasks = new int[2 * tasks + 1];
+
+        //Refactor later with datastructures reafactor.
+        System.out.println("Enter the tasks (machine, time)"
+                + " in process order");
+        for (int j = 1; j <= tasks; j++) { // get tasks for job i
+            int machine = keyboard.readInteger();
+            int taskTime = keyboard.readInteger();
+            if (machine < 1 || machine > specification.getNumMachines() || taskTime < 1) {
+                throw new MyInputException(MachineShopSimulator.BAD_MACHINE_NUMBER_OR_TASK_TIME);
+            }
+            specificationsForTasks[2*(j-1)+1] = machine;
+            specificationsForTasks[2*(j-1)+2] = taskTime;
+        }
+        return specificationsForTasks;
+    }
+
     private void readJobSpecifications() {
         // input the jobs
-        JobSpecification[] jobSpecifications = new JobSpecification[specification.getNumJobs()+1];
-        for (int i=1; i <= specification.getNumJobs(); i++) {
-            jobSpecifications[i] = new JobSpecification();
-        }
-        specification.setJobSpecification(jobSpecifications);
+        Job[] jobs = new Job[specification.getNumJobs()+1]; //Refactor with javaCompRefactor
         for (int i = 1; i <= specification.getNumJobs(); i++) {
             System.out.println("Enter number of tasks for job " + i);
             int tasks = keyboard.readInteger(); // number of tasks
-            if (tasks < 1)
+            if (tasks < 1) {
                 throw new MyInputException(MachineShopSimulator.EACH_JOB_MUST_HAVE_AT_LEAST_1_TASK);
-            jobSpecifications[i].setNumTasks(tasks);
-
-            int[] specificationsForTasks = new int[2 * tasks + 1];
-
-            System.out.println("Enter the tasks (machine, time)"
-                    + " in process order");
-            for (int j = 1; j <= tasks; j++) { // get tasks for job i
-                int theMachine = keyboard.readInteger();
-                int theTaskTime = keyboard.readInteger();
-                if (theMachine < 1 || theMachine > specification.getNumMachines()
-                        || theTaskTime < 1)
-                    throw new MyInputException(MachineShopSimulator.BAD_MACHINE_NUMBER_OR_TASK_TIME);
-                specificationsForTasks[2*(j-1)+1] = theMachine;
-                specificationsForTasks[2*(j-1)+2] = theTaskTime;
             }
-            specification.setSpecificationsForTasks(i, specificationsForTasks);
+            jobs[i] = new Job(i);
+            jobs[i].setNumTasks(tasks);
+            int[] jobTasks = createTaskSpecifications(jobs[i], tasks);
+            jobs[i].setSpecificationsForTasks(jobTasks);
         }
+        specification.jobs = jobs;
     }
 
     private void readNumberMachinesAndJobs() {

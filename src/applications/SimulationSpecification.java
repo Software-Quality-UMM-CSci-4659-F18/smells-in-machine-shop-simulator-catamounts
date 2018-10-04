@@ -6,7 +6,7 @@ public class SimulationSpecification {
     private int numMachines;
     private int numJobs;
     private int[] changeOverTimes;
-    private JobSpecification[] jobSpecifications;
+    public Job[] jobs;
 
     public void setNumMachines(int numMachines) {
         this.numMachines = numMachines;
@@ -33,15 +33,7 @@ public class SimulationSpecification {
     }
 
     public void setSpecificationsForTasks(int jobNumber, int[] specificationsForTasks) {
-        jobSpecifications[jobNumber].setSpecificationsForTasks(specificationsForTasks);
-    }
-
-    public void setJobSpecification(JobSpecification[] jobSpecifications) {
-        this.jobSpecifications = jobSpecifications;
-    }
-
-    public JobSpecification getJobSpecifications(int jobNumber) {
-        return jobSpecifications[jobNumber];
+        jobs[jobNumber].setSpecificationsForTasks(specificationsForTasks);
     }
 
     @Override
@@ -52,7 +44,7 @@ public class SimulationSpecification {
         builder.append("change overs: ").append(Arrays.toString(changeOverTimes));
         for (int i=1; i<=numJobs; ++i) {
             builder.append("; job ").append(i).append(" tasks: ");
-            builder.append(Arrays.toString(jobSpecifications[i].getSpecificationsForTasks()));
+            builder.append(Arrays.toString(jobs[i].getSpecificationsForTasks()));
         }
 
         builder.append(">");
