@@ -28,22 +28,20 @@ public class SpecificationReader {
         specification.setChangeOverTimes(changeOverTimes);
     }
 
-    private int[] createTaskSpecifications(Job job, int tasks) {
-        int[] specificationsForTasks = new int[2 * tasks + 1];
+    private Task[] createJobTasks (Job job, int numTasks) {
+        Task[] tasks = new Task[numTasks];
 
         //Refactor later with datastructures reafactor.
-        System.out.println("Enter the tasks (machine, time)"
-                + " in process order");
-        for (int j = 1; j <= tasks; j++) { // get tasks for job i
+        System.out.println("Enter the tasks (machine, time) in process order");
+        for (int i = 0; i < numTasks; i++) { // get tasks for job i
             int machine = keyboard.readInteger();
             int taskTime = keyboard.readInteger();
             if (machine < 1 || machine > specification.getNumMachines() || taskTime < 1) {
                 throw new MyInputException(MachineShopSimulator.BAD_MACHINE_NUMBER_OR_TASK_TIME);
             }
-            specificationsForTasks[2*(j-1)+1] = machine;
-            specificationsForTasks[2*(j-1)+2] = taskTime;
+            tasks[i] = new Task(machine, taskTime);
         }
-        return specificationsForTasks;
+        return tasks;
     }
 
     private void readJobSpecifications() {
@@ -57,7 +55,7 @@ public class SpecificationReader {
             }
             jobs[i] = new Job(i);
             jobs[i].numTasks = tasks;
-            int[] jobTasks = createTaskSpecifications(jobs[i], tasks);
+            int[] jobTasks = createJobTasks(jobs[i], tasks);
             jobs[i].setSpecificationsForTasks(jobTasks);
         }
         specification.jobs = jobs;
