@@ -4,6 +4,7 @@ import com.pholser.junit.quickcheck.From;
 import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 import org.junit.runner.RunWith;
+import dataStructures.LinkedQueue;
 
 import static junit.framework.TestCase.assertEquals;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -70,20 +71,23 @@ public class SimulationProperties {
 
         int numMachines = specification.getNumMachines();
         int numJobs = specification.getNumJobs();
-        int[] expectedMachineTaskCounts = new int[numMachines+1];
+        int[] expectedMachineTaskCounts = new int[numMachines];
 
-        for (int i=1; i<=numJobs; ++i) {
+        for (int i=0; i< numJobs; ++i) {
             Job job = specification.jobs[i];
             int numTasks = job.numTasks;
-            int[] specsForTasks = job.getSpecificationsForTasks();
-            for (int j=1; j<=numTasks; ++j) {
-                int theMachine = specsForTasks[2*(j-1)+1];
+//            int[] specsForTasks = job.getSpecificationsForTasks();
+            LinkedQueue tempTaskQueue = new LinkedQueue();
+            tempTaskQueue = job.getTaskQ();
+            for (int j=0; j<numTasks; ++j) {
+                int theMachine = ((Task)(tempTaskQueue.getFrontElement())).getMachine();
                 ++expectedMachineTaskCounts[theMachine];
+                tempTaskQueue.remove();
             }
         }
 
         int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
-        for (int i=1; i<=numMachines; ++i) {
+        for (int i=0; i<numMachines; ++i) {
             assertEquals(expectedMachineTaskCounts[i], actualMachineTasksCounts[i]);
         }
     }
