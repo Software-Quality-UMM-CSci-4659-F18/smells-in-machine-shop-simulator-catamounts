@@ -32,22 +32,22 @@ public class SimulationSpecification {
         return changeOverTimes[machineNumber];
     }
 
-    public void setSpecificationsForTasks(int jobNumber, int[] specificationsForTasks) {
-        jobs[jobNumber].setSpecificationsForTasks(specificationsForTasks);
-    }
+//    public void setSpecificationsForTasks(int jobNumber, int[] specificationsForTasks) {
+//        jobs[jobNumber].setSpecificationsForTasks(specificationsForTasks);
+//    }
 
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<").append(numMachines).append(" machines, ");
-        builder.append(numJobs).append(" jobs; ");
-        builder.append("change overs: ").append(Arrays.toString(changeOverTimes));
-        for (int i=1; i<=numJobs; ++i) {
-            builder.append("; job ").append(i).append(" tasks: ");
-            builder.append(Arrays.toString(jobs[i].getSpecificationsForTasks()));
-        }
-
-        builder.append(">");
-        return builder.toString();
-    }
+//    @Override
+//    public String toString() {
+//        StringBuilder builder = new StringBuilder();
+//        builder.append("<").append(numMachines).append(" machines, ");
+//        builder.append(numJobs).append(" jobs; ");
+//        builder.append("change overs: ").append(Arrays.toString(changeOverTimes));
+//        for (int i=1; i<=numJobs; ++i) {
+//            builder.append("; job ").append(i).append(" tasks: ");
+//            builder.append(Arrays.toString(jobs[i].getSpecificationsForTasks()));
+//        }
+//
+//        builder.append(">");
+//        return builder.toString();
+//    }
 }
