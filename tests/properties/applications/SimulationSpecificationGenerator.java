@@ -3,7 +3,6 @@ package applications;
 import com.pholser.junit.quickcheck.generator.GenerationStatus;
 import com.pholser.junit.quickcheck.generator.Generator;
 import com.pholser.junit.quickcheck.random.SourceOfRandomness;
-import dataStructures.LinkedQueue;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -50,15 +49,19 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
             jobs[i] = new Job(i);
         }
         result.jobs = jobs;
-        for (int i=0; i < numJobs; ++i) {
-            int numTasks = r.nextInt(MAX_TASKS);
+        for (int i=1; i<=numJobs; ++i) {
+            int numTasks = r.nextInt(MAX_TASKS) + 1;
             jobs[i].numTasks = numTasks;
 
-            for (int j = 0; j < numTasks; ++j) {
+            int[] specificationsForTasks = new int[2 * numTasks + 1];
+
+            for (int j = 1; j <= numTasks; ++j) {
                 int theMachine = r.nextInt(numMachines) + 1;
                 int theTaskTime = r.nextInt(MAX_TASK_TIME) + 1;
-                jobs[i].addTask(theMachine, theTaskTime);
+                specificationsForTasks[2 * (j - 1) + 1] = theMachine;
+                specificationsForTasks[2 * (j - 1) + 2] = theTaskTime;
             }
+            result.setSpecificationsForTasks(i, specificationsForTasks);
         }
 
         return result;
@@ -80,11 +83,11 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
             SourceOfRandomness r, SimulationSpecification spec) {
 
         return Stream.of(
-            removeRandomMachine(r, spec),
-            removeRandomJob(r, spec)
+                removeRandomMachine(r, spec),
+                removeRandomJob(r, spec)
         )
-        .filter(Objects::nonNull)
-        .collect(Collectors.toList());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 
     private SimulationSpecification removeRandomMachine(
@@ -110,17 +113,14 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
         smallerSpec.setChangeOverTimes(newChangeOvers);
 
         Job[] jobs = new Job[numJobs+1];
-        for (int i=0; i<numJobs; ++i) {
+        for (int i=1; i<=numJobs; ++i) {
             Job job = spec.jobs[i];
             int numTasks = job.numTasks;
-//            int[] specsForTasks = job.getSpecificationsForTasks();
+            int[] specsForTasks = job.getSpecificationsForTasks();
             int numTasksOnThisMachine = 0;
-            LinkedQueue tempTaskQueue = new LinkedQueue();
-            tempTaskQueue = job.getTaskQ();
-            for (int j=0; j<numTasks; ++j) {
-                if (((Task)(tempTaskQueue.getFrontElement())).getMachine() == machineToRemove) {
+            for (int j=1; j<=numTasks; ++j) {
+                if (specsForTasks[2*(j-1)+1] == machineToRemove) {
                     ++numTasksOnThisMachine;
-                    tempTaskQueue.remove();
                 }
             }
             // If these are equal then *all* the tasks for this job are
@@ -132,30 +132,21 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
             }
 
             final int newNumTasks = numTasks - numTasksOnThisMachine;
-//            int[] newSpecsForTasks = new int[2* newNumTasks + 1];
-            LinkedQueue tempTaskQueue2 = new LinkedQueue();
-            LinkedQueue newTaskQueue = new LinkedQueue();
-            tempTaskQueue2 = job.getTaskQ();
+            int[] newSpecsForTasks = new int[2* newNumTasks + 1];
             for (int j=1, k=1; j<=numTasks; ++j) {
-                int machine = ((Task)(tempTaskQueue2.getFrontElement())).getMachine();
-                int taskTime = ((Task)(tempTaskQueue2.getFrontElement())).getTime();
+                int machine = specsForTasks[2*(j-1)+1];
                 if (machine != machineToRemove) {
                     if (machine > machineToRemove) {
                         --machine;
                     }
-//                    newSpecsForTasks[2*(k-1)+1] = machine;
-//                    newSpecsForTasks[2*(k-1)+2] = specsForTasks[2*(j-1)+2];
-
+                    newSpecsForTasks[2*(k-1)+1] = machine;
+                    newSpecsForTasks[2*(k-1)+2] = specsForTasks[2*(j-1)+2];
                     ++k;
-                } else {
-                    Task newTask = new Task(machine, taskTime);
-                    newTaskQueue.put(newTask);
-                    tempTaskQueue2.remove();
                 }
             }
             Job newJobSpec = new Job(i);
             newJobSpec.numTasks = newNumTasks;
-//            newJobSpec.setSpecificationsForTasks(newSpecsForTasks);
+            newJobSpec.setSpecificationsForTasks(newSpecsForTasks);
             jobs[i] = newJobSpec;
         }
         smallerSpec.jobs = jobs;
