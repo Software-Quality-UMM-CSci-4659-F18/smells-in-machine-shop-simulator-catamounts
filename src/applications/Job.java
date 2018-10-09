@@ -12,8 +12,8 @@ class Job {
     public int completionTime;
     public int totalWaitTime;
 
-    Job(int theId) {
-        id = theId;
+    Job(int id) {
+        this.id = id;
         taskQ = new LinkedQueue();
     }
 
