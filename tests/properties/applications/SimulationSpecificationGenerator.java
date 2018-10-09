@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import dataStructures.LinkedQueue;
 
 public class SimulationSpecificationGenerator extends Generator<SimulationSpecification> {
     /* I initially thought of having larger numbers here, like 100 or 1,000, but
@@ -83,8 +84,7 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
                 .collect(Collectors.toList());
     }
 
-    private SimulationSpecification removeRandomMachine(
-            SourceOfRandomness r, SimulationSpecification spec) {
+    private SimulationSpecification removeRandomMachine(SourceOfRandomness r, SimulationSpecification spec) {
         SimulationSpecification smallerSpec = new SimulationSpecification();
         int originalNumMachines = spec.getNumMachines();
         if (originalNumMachines == 1) {
@@ -97,33 +97,36 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
         int machineToRemove = r.nextInt(originalNumMachines) + 1;
 
         int[] newChangeOvers = new int[originalNumMachines];
-        for (int i=1, j=1; i<=originalNumMachines; ++i) {
+        for (int i = 1, j = 1; i <= originalNumMachines; i++) {
             if (i != machineToRemove) {
                 newChangeOvers[j] = spec.getChangeOverTimes(i);
-                ++j;
+                j++;
             }
         }
         smallerSpec.setChangeOverTimes(newChangeOvers);
 
-        Job[] jobs = new Job[numJobs+1];
-        for (int i=1; i<=numJobs; ++i) {
+        Job[] jobs = new Job[numJobs];
+        for (int i = 0; i < numJobs; i++) {
             Job job = spec.jobs[i];
             int numTasks = job.numTasks;
-            int[] specsForTasks = job.getSpecificationsForTasks();
+            LinkedQueue jobTasks = job.getTaskQ();
             int numTasksOnThisMachine = 0;
-            for (int j=1; j<=numTasks; ++j) {
-                if (specsForTasks[2*(j-1)+1] == machineToRemove) {
-                    ++numTasksOnThisMachine;
+            for (int j = 0; j < numTasks; j++) {
+                Task task = (Task)jobTasks.getFrontElement();
+                if (task.getMachine() == machineToRemove) {
+                    numTasksOnThisMachine++;
                 }
+                jobTasks.put(task);
             }
-            // If these are equal then *all* the tasks for this job are
-            // on the machine we're going to remove, which would make this
-            // task empty and break things, so we'll just not remove this
-            // machine.
+
+            /* If the only tasks in the taskQ use the machine we want to get rid of,
+               then removing this machine would break things.
+               Instead, we will not remove this machine.*/
             if (numTasksOnThisMachine == numTasks) {
                 return null;
             }
 
+            // RESTART REFACTORING HERE
             final int newNumTasks = numTasks - numTasksOnThisMachine;
             int[] newSpecsForTasks = new int[2* newNumTasks + 1];
             for (int j=1, k=1; j<=numTasks; ++j) {
