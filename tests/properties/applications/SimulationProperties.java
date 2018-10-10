@@ -10,6 +10,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
+import dataStructures.LinkedQueue;
+
 @RunWith(JUnitQuickcheck.class)
 public class SimulationProperties {
     @Property
@@ -20,7 +22,7 @@ public class SimulationProperties {
         final SimulationResults results = MachineShopSimulator.runSimulation(specification);
         final int finishTime = results.getFinishTime();
         final Job[] jobs = results.getJobs();
-        final int lastJobCompletionTime = jobs[jobs.length-1].completionTime;
+        final int lastJobCompletionTime = jobs[jobs.length-1].completionTime; //Not sure if this should be jobs.length - 2
         assertEquals(finishTime, lastJobCompletionTime);
     }
 
@@ -72,19 +74,22 @@ public class SimulationProperties {
         int numJobs = specification.getNumJobs();
         int[] expectedMachineTaskCounts = new int[numMachines+1];
 
-        for (int i=1; i<=numJobs; ++i) {
+        for (int i = 0; i < numJobs; i++) {
             Job job = specification.jobs[i];
+            //System.err.println("job: " + job.getId() + " | taskQ: " + job.getTaskQ().toString());
             int numTasks = job.numTasks;
-            int[] specsForTasks = job.getSpecificationsForTasks();
-            for (int j=1; j<=numTasks; ++j) {
-                int theMachine = specsForTasks[2*(j-1)+1];
-                ++expectedMachineTaskCounts[theMachine];
+            LinkedQueue taskQ = job.getTaskQ();
+            for (int j = 0; j < numTasks; j++) {
+                int machine = ((Task)taskQ.getFrontElement()).getMachine();
+                expectedMachineTaskCounts[machine]++;
+                taskQ.put(taskQ.remove());
             }
         }
 
         int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
         for (int i=1; i<=numMachines; ++i) {
-            assertEquals(expectedMachineTaskCounts[i], actualMachineTasksCounts[i]);
+            assertEquals(expectedMachineTaskCounts[i - 1], actualMachineTasksCounts[i]);
         }
     }
+
 }
