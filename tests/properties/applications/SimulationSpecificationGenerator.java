@@ -108,37 +108,38 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
         Job[] jobs = new Job[numJobs];
         for (int i = 0; i < numJobs; i++) {
             Job job = spec.jobs[i];
-            int numTasks = job.numTasks;
+            int machineTaskCount = job.numTasks;
             LinkedQueue jobTasks = job.getTaskQ();
             int numTasksOnThisMachine = 0;
-            for (int j = 0; j < numTasks; j++) {
+            for (int j = 0; j < machineTaskCount; j++) {
                 Task task = (Task)jobTasks.getFrontElement();
                 if (task.getMachine() == machineToRemove) {
                     numTasksOnThisMachine++;
                 }
                 jobTasks.put(task);
+                jobTasks.remove();
             }
 
             /* If the only tasks in the taskQ use the machine we want to get rid of,
                then removing this machine would break things.
                Instead, we will not remove this machine.*/
-            if (numTasksOnThisMachine == numTasks) {
+            if (numTasksOnThisMachine == machineTaskCount) {
                 return null;
             }
 
             // RESTART REFACTORING HERE
-            final int newNumTasks = numTasks - numTasksOnThisMachine;
-            int[] newSpecsForTasks = new int[2* newNumTasks + 1];
-            for (int j=1, k=1; j<=numTasks; ++j) {
-                int machine = specsForTasks[2*(j-1)+1];
-                if (machine != machineToRemove) {
-                    if (machine > machineToRemove) {
-                        --machine;
+            final int newNumTasks = machineTaskCount - numTasksOnThisMachine;
+            LinkedQueue newJobTasks = new LinkedQueue();
+            for(int j = 0; j < machineTaskCount; j++){
+                Task curTask = (Task)jobTasks.getFrontElement();
+                if(curTask.getMachine() != machineToRemove){
+                    int newMachineId = curTask.getMachine();
+                    if(newMachineId > machineToRemove){
+                        newMachineId--;
                     }
-                    newSpecsForTasks[2*(k-1)+1] = machine;
-                    newSpecsForTasks[2*(k-1)+2] = specsForTasks[2*(j-1)+2];
-                    ++k;
+                    newJobTasks.put(new Task(newMachineId, curTask.getTime()));
                 }
+                jobTasks.put(jobTasks.remove());
             }
             Job newJobSpec = new Job(i);
             newJobSpec.numTasks = newNumTasks;
