@@ -10,6 +10,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
+import dataStructures.LinkedQueue;
+
 @RunWith(JUnitQuickcheck.class)
 public class SimulationProperties {
     @Property
@@ -58,6 +60,35 @@ public class SimulationProperties {
         for (int i=1; i<jobCompletionData.length-1; ++i) {
             assertThat(jobCompletionData[i].completionTime,
                     lessThanOrEqualTo(jobCompletionData[i+1].completionTime));
+        }
+    }
+
+    @Property
+    public void machinesCompletedCorrectNumberOfTasks(
+            @From(SimulationSpecificationGenerator.class)
+                    SimulationSpecification specification)
+    {
+
+        int numMachines = specification.getNumMachines();
+        int numJobs = specification.getNumJobs();
+        int[] expectedMachineTaskCounts = new int[numMachines]; //zero index
+
+        for (int i = 0; i < numJobs; i++) {
+            Job job = specification.jobs[i];
+            int numTasks = job.numTasks;
+            LinkedQueue taskQ = job.getTaskQ();
+            for (int j = 0; j < numTasks; j++) {
+                int machine = ((Task)taskQ.getFrontElement()).getMachine();
+                expectedMachineTaskCounts[machine - 1]++;
+                taskQ.put(taskQ.remove());
+            }
+        }
+
+        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
+
+        int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
+        for (int i=1; i<=numMachines; i++) {
+            assertEquals(expectedMachineTaskCounts[i - 1], actualMachineTasksCounts[i]);
         }
     }
 
