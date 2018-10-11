@@ -63,33 +63,4 @@ public class SimulationProperties {
         }
     }
 
-    @Property
-    public void machinesCompletedCorrectNumberOfTasks(
-            @From(SimulationSpecificationGenerator.class)
-                    SimulationSpecification specification)
-    {
-        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
-
-        int numMachines = specification.getNumMachines();
-        int numJobs = specification.getNumJobs();
-        int[] expectedMachineTaskCounts = new int[numMachines+1];
-
-        for (int i = 0; i < numJobs; i++) {
-            Job job = specification.jobs[i];
-            //System.err.println("job: " + job.getId() + " | taskQ: " + job.getTaskQ().toString());
-            int numTasks = job.numTasks;
-            LinkedQueue taskQ = job.getTaskQ();
-            for (int j = 0; j < numTasks; j++) {
-                int machine = ((Task)taskQ.getFrontElement()).getMachine();
-                expectedMachineTaskCounts[machine]++;
-                taskQ.put(taskQ.remove());
-            }
-        }
-
-        int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
-        for (int i=1; i<=numMachines; ++i) {
-            assertEquals(expectedMachineTaskCounts[i - 1], actualMachineTasksCounts[i]);
-        }
-    }
-
 }
