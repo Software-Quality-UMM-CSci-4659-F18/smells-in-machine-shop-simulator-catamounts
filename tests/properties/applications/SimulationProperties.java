@@ -10,6 +10,8 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
+import dataStructures.LinkedQueue;
+
 @RunWith(JUnitQuickcheck.class)
 public class SimulationProperties {
     @Property
@@ -50,7 +52,7 @@ public class SimulationProperties {
     @Property
     public void jobsOutputInTimeOrder(
             @From(SimulationSpecificationGenerator.class)
-                SimulationSpecification specification)
+                    SimulationSpecification specification)
     {
         final SimulationResults results = MachineShopSimulator.runSimulation(specification);
 
@@ -64,27 +66,30 @@ public class SimulationProperties {
     @Property
     public void machinesCompletedCorrectNumberOfTasks(
             @From(SimulationSpecificationGenerator.class)
-                SimulationSpecification specification)
+                    SimulationSpecification specification)
     {
-        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
 
         int numMachines = specification.getNumMachines();
         int numJobs = specification.getNumJobs();
-        int[] expectedMachineTaskCounts = new int[numMachines+1];
+        int[] expectedMachineTaskCounts = new int[numMachines]; //zero index
 
-        for (int i=1; i<=numJobs; ++i) {
+        for (int i = 0; i < numJobs; i++) {
             Job job = specification.jobs[i];
             int numTasks = job.numTasks;
-            int[] specsForTasks = job.getSpecificationsForTasks();
-            for (int j=1; j<=numTasks; ++j) {
-                int theMachine = specsForTasks[2*(j-1)+1];
-                ++expectedMachineTaskCounts[theMachine];
+            LinkedQueue taskQ = job.getTaskQ();
+            for (int j = 0; j < numTasks; j++) {
+                int machine = ((Task)taskQ.getFrontElement()).getMachine();
+                expectedMachineTaskCounts[machine - 1]++;
+                taskQ.put(taskQ.remove());
             }
         }
 
+        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
+
         int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
-        for (int i=1; i<=numMachines; ++i) {
-            assertEquals(expectedMachineTaskCounts[i], actualMachineTasksCounts[i]);
+        for (int i=1; i<=numMachines; i++) {
+            assertEquals(expectedMachineTaskCounts[i - 1], actualMachineTasksCounts[i]);
         }
     }
+
 }

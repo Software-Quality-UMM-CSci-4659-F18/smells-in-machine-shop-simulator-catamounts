@@ -17,22 +17,22 @@ import exceptions.MyInputException;
 /**
  * A simple set of unit tests that just run the MachineShopSimulator on a set
  * of input files and compare the results to the expected output files.
- * 
+ *
  * @author Nic McPhee
  */
 public class FileIoTests {
 
     private static final String ACCEPTANCE_TEST_DIRECTORY = "tests/acceptanceTests/";
-    private static final String TEST_FILE_DIRECTORY 
-        = ACCEPTANCE_TEST_DIRECTORY + "Machine_shop_test_files/";
+    private static final String TEST_FILE_DIRECTORY
+            = ACCEPTANCE_TEST_DIRECTORY + "Machine_shop_test_files/";
     private static final String EXCEPTION_TEST_FILE_DIRECTORY
-        = ACCEPTANCE_TEST_DIRECTORY + "Machine_shop_exception_test_files/";
+            = ACCEPTANCE_TEST_DIRECTORY + "Machine_shop_exception_test_files/";
 
     /**
      * For each file in the Test_files directory with a name of the form
      * *.input, run the simulator with that as input, save the output
      * to a temp file, and compare that to the expected output file.
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public final void runFileBasedTests() throws IOException {
@@ -72,7 +72,7 @@ public class FileIoTests {
         return outputFile;
     }
 
-    private void checkFilesMatch(String expectedOutputFile, File outputFile) 
+    private void checkFilesMatch(String expectedOutputFile, File outputFile)
             throws IOException {
         FileReader expectedFileReader = new FileReader(TEST_FILE_DIRECTORY + expectedOutputFile);
         FileReader actualFileReader = new FileReader(outputFile);
@@ -80,16 +80,16 @@ public class FileIoTests {
         BufferedReader actualReader = new BufferedReader(actualFileReader);
         String expectedLine = expectedReader.readLine();
         String actualLine = actualReader.readLine();
-        
+
         while (expectedLine != null && actualLine != null) {
             assertEquals("In file " + expectedOutputFile, expectedLine, actualLine);
             expectedLine = expectedReader.readLine();
-            actualLine = actualReader.readLine();            
+            actualLine = actualReader.readLine();
         }
-        assertTrue("In file " + expectedOutputFile + " the files didn't end at the same time", 
+        assertTrue("In file " + expectedOutputFile + " the files didn't end at the same time",
                 expectedLine == null && actualLine == null);
     }
-    
+
     @Test
     public void noMachinesShouldThrowException() throws IOException {
         String inputFile = "NoMachines.input";

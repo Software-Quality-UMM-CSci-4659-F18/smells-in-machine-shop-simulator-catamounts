@@ -1,12 +1,10 @@
 package applications;
 
-import java.util.Arrays;
-
 public class SimulationSpecification {
-    private int numMachines;
-    private int numJobs;
-    private int[] changeOverTimes;
-    public Job[] jobs;
+    private int numMachines; //Need's to be refactor such that it is public
+    private int numJobs; //Need's to be refactor so that it is public
+    private int[] changeOverTimes; //1 indexed: to be refactored
+    public Job[] jobs; //0 indexed
 
     public void setNumMachines(int numMachines) {
         this.numMachines = numMachines;
@@ -30,24 +28,5 @@ public class SimulationSpecification {
 
     public int getChangeOverTimes(int machineNumber) {
         return changeOverTimes[machineNumber];
-    }
-
-    public void setSpecificationsForTasks(int jobNumber, int[] specificationsForTasks) {
-        jobs[jobNumber].setSpecificationsForTasks(specificationsForTasks);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<").append(numMachines).append(" machines, ");
-        builder.append(numJobs).append(" jobs; ");
-        builder.append("change overs: ").append(Arrays.toString(changeOverTimes));
-        for (int i=1; i<=numJobs; ++i) {
-            builder.append("; job ").append(i).append(" tasks: ");
-            builder.append(Arrays.toString(jobs[i].getSpecificationsForTasks()));
-        }
-
-        builder.append(">");
-        return builder.toString();
     }
 }

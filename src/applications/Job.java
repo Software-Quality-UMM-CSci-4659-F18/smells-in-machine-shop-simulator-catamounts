@@ -9,16 +9,11 @@ class Job {
     public int machineArrivalTime; // The global time when the job arrives at the machine of the current task.
     private int id;
     public int numTasks;
-    private int[] specificationsForTasks;
     public int completionTime;
     public int totalWaitTime;
 
-    public int[] getSpecificationsForTasks() {
-        return specificationsForTasks;
-    }
-
-    Job(int theId) {
-        id = theId;
+    Job(int id) {
+        this.id = id;
         taskQ = new LinkedQueue();
     }
 
@@ -34,10 +29,6 @@ class Job {
         int taskTime = ((Task) getTaskQ().remove()).getTime();
         timeRunning += taskTime;
         return taskTime;
-    }
-
-    public void setSpecificationsForTasks(int[] specificationsForTasks) {
-        this.specificationsForTasks = specificationsForTasks;
     }
 
     public int getTimeRunning() {
