@@ -2,6 +2,8 @@
 
 package applications;
 
+import dataStructures.LinkedQueue;
+
 public class MachineShopSimulator {
     
     public static final String NUMBER_OF_MACHINES_MUST_BE_AT_LEAST_1 = "number of machines must be >= 1";
@@ -85,21 +87,10 @@ public class MachineShopSimulator {
 
     private static void setUpJobs(SimulationSpecification specification) {
         // input the jobs
-        Job theJob;
-        for (int i = 1; i <= specification.getNumJobs(); i++) {
-            int tasks = specification.jobs[i].numTasks;
-            int firstMachine = 0; // machine for first task
-
-            // create the job
-            theJob = new Job(i);
-            for (int j = 1; j <= tasks; j++) {
-                int theMachine = specification.jobs[i].getSpecificationsForTasks()[2*(j-1)+1];
-                int theTaskTime = specification.jobs[i].getSpecificationsForTasks()[2*(j-1)+2];
-                if (j == 1)
-                    firstMachine = theMachine; // job's first machine
-                theJob.addTask(theMachine, theTaskTime); // add to
-            } // task queue
-            machine[firstMachine].getJobQ().put(theJob);
+        for (int i = 0; i < specification.getNumJobs(); i++) {
+            LinkedQueue jobTasks = specification.jobs[i].getTaskQ();
+            int firstMachine = ((Task)jobTasks.getFrontElement()).getMachine();
+            machine[firstMachine].getJobQ().put(specification.jobs[i]);
         }
     }
 

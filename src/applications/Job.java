@@ -9,12 +9,11 @@ class Job {
     public int machineArrivalTime; // The global time when the job arrives at the machine of the current task.
     private int id;
     public int numTasks;
-    private Task[] tasks;
     public int completionTime;
     public int totalWaitTime;
 
-    Job(int theId) {
-        id = theId;
+    Job(int id) {
+        this.id = id;
         taskQ = new LinkedQueue();
     }
 

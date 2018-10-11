@@ -50,7 +50,7 @@ public class SimulationProperties {
     @Property
     public void jobsOutputInTimeOrder(
             @From(SimulationSpecificationGenerator.class)
-                SimulationSpecification specification)
+                    SimulationSpecification specification)
     {
         final SimulationResults results = MachineShopSimulator.runSimulation(specification);
 
@@ -61,30 +61,4 @@ public class SimulationProperties {
         }
     }
 
-    @Property
-    public void machinesCompletedCorrectNumberOfTasks(
-            @From(SimulationSpecificationGenerator.class)
-                SimulationSpecification specification)
-    {
-        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
-
-        int numMachines = specification.getNumMachines();
-        int numJobs = specification.getNumJobs();
-        int[] expectedMachineTaskCounts = new int[numMachines+1];
-
-        for (int i=1; i<=numJobs; ++i) {
-            Job job = specification.jobs[i];
-            int numTasks = job.numTasks;
-            int[] specsForTasks = job.getSpecificationsForTasks();
-            for (int j=1; j<=numTasks; ++j) {
-                int theMachine = specsForTasks[2*(j-1)+1];
-                ++expectedMachineTaskCounts[theMachine];
-            }
-        }
-
-        int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
-        for (int i=1; i<=numMachines; ++i) {
-            assertEquals(expectedMachineTaskCounts[i], actualMachineTasksCounts[i]);
-        }
-    }
 }
