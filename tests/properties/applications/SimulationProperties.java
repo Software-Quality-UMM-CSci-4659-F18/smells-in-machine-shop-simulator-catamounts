@@ -10,8 +10,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.hamcrest.Matchers.lessThanOrEqualTo;
 
-import dataStructures.LinkedQueue;
-
 @RunWith(JUnitQuickcheck.class)
 public class SimulationProperties {
     @Property
@@ -22,7 +20,7 @@ public class SimulationProperties {
         final SimulationResults results = MachineShopSimulator.runSimulation(specification);
         final int finishTime = results.getFinishTime();
         final Job[] jobs = results.getJobs();
-        final int lastJobCompletionTime = jobs[jobs.length-1].completionTime; //Not sure if this should be jobs.length - 2
+        final int lastJobCompletionTime = jobs[jobs.length-1].completionTime;
         assertEquals(finishTime, lastJobCompletionTime);
     }
 

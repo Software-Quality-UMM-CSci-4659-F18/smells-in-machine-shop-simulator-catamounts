@@ -4,8 +4,6 @@ package applications;
 
 import dataStructures.LinkedQueue;
 
-import java.util.Iterator;
-
 public class MachineShopSimulator {
     
     public static final String NUMBER_OF_MACHINES_MUST_BE_AT_LEAST_1 = "number of machines must be >= 1";
