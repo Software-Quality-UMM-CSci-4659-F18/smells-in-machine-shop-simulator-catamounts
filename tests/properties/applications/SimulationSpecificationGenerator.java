@@ -58,7 +58,6 @@ public class SimulationSpecificationGenerator extends Generator<SimulationSpecif
             }
         }
         result.jobs = jobs;
-        //System.err.println("result.jobs: " + result.jobs[0].getTaskQ().isEmpty());
         return result;
     }
 

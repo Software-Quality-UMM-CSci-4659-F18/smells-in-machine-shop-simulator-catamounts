@@ -22,7 +22,7 @@ public class SimulationProperties {
         final SimulationResults results = MachineShopSimulator.runSimulation(specification);
         final int finishTime = results.getFinishTime();
         final Job[] jobs = results.getJobs();
-        final int lastJobCompletionTime = jobs[jobs.length-1].completionTime; //Not sure if this should be jobs.length - 2
+        final int lastJobCompletionTime = jobs[jobs.length-1].completionTime;
         assertEquals(finishTime, lastJobCompletionTime);
     }
 
@@ -68,26 +68,26 @@ public class SimulationProperties {
             @From(SimulationSpecificationGenerator.class)
                     SimulationSpecification specification)
     {
-        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
 
         int numMachines = specification.getNumMachines();
         int numJobs = specification.getNumJobs();
-        int[] expectedMachineTaskCounts = new int[numMachines+1];
+        int[] expectedMachineTaskCounts = new int[numMachines]; //zero index
 
         for (int i = 0; i < numJobs; i++) {
             Job job = specification.jobs[i];
-            //System.err.println("job: " + job.getId() + " | taskQ: " + job.getTaskQ().toString());
             int numTasks = job.numTasks;
             LinkedQueue taskQ = job.getTaskQ();
             for (int j = 0; j < numTasks; j++) {
                 int machine = ((Task)taskQ.getFrontElement()).getMachine();
-                expectedMachineTaskCounts[machine]++;
+                expectedMachineTaskCounts[machine - 1]++;
                 taskQ.put(taskQ.remove());
             }
         }
 
+        final SimulationResults results = MachineShopSimulator.runSimulation(specification);
+
         int[] actualMachineTasksCounts = results.getNumTasksPerMachine();
-        for (int i=1; i<=numMachines; ++i) {
+        for (int i=1; i<=numMachines; i++) {
             assertEquals(expectedMachineTaskCounts[i - 1], actualMachineTasksCounts[i]);
         }
     }
